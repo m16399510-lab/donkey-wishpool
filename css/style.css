@@ -535,6 +535,21 @@ body::after {
     background: var(--status-rejected);
 }
 
+.wish-card[data-status="processed"] {
+    background: rgba(74, 222, 128, 0.08);
+    border-color: rgba(74, 222, 128, 0.2);
+}
+
+.wish-card[data-status="observing"] {
+    background: rgba(251, 191, 36, 0.08);
+    border-color: rgba(251, 191, 36, 0.2);
+}
+
+.wish-card[data-status="rejected"] {
+    background: rgba(248, 113, 113, 0.08);
+    border-color: rgba(248, 113, 113, 0.2);
+}
+
 .wish-card:hover {
     border-color: var(--border-glow);
     transform: translateX(2px);
@@ -989,6 +1004,30 @@ body::after {
 
 .data-table tr:last-child td {
     border-bottom: none;
+}
+
+.data-table tr[data-status="processed"] td {
+    background: rgba(74, 222, 128, 0.06);
+}
+
+.data-table tr[data-status="observing"] td {
+    background: rgba(251, 191, 36, 0.06);
+}
+
+.data-table tr[data-status="rejected"] td {
+    background: rgba(248, 113, 113, 0.06);
+}
+
+.data-table tr[data-status="processed"]:hover td {
+    background: rgba(74, 222, 128, 0.1);
+}
+
+.data-table tr[data-status="observing"]:hover td {
+    background: rgba(251, 191, 36, 0.1);
+}
+
+.data-table tr[data-status="rejected"]:hover td {
+    background: rgba(248, 113, 113, 0.1);
 }
 
 .data-table .desc-cell {

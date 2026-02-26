@@ -205,7 +205,7 @@
             statusHtml += '</div>';
 
             html += `
-                <tr data-id="${wish.id}">
+                <tr data-id="${wish.id}" data-status="${wish.status}">
                     <td>${index + 1}</td>
                     <td>${typeBadge}</td>
                     <td class="desc-cell">${descHtml}</td>
