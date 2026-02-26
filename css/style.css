@@ -844,6 +844,192 @@ body::after {
     border: 1px solid rgba(248, 113, 113, 0.3);
 }
 
+/* === Pagination === */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.page-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(20, 16, 32, 0.6);
+    border: 1px solid var(--border-subtle);
+    color: rgba(245, 230, 200, 0.6);
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+    background: rgba(212, 168, 67, 0.15);
+    border-color: var(--gold);
+    color: var(--gold-light);
+}
+
+.page-btn.active {
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    border-color: var(--gold);
+    color: var(--ink);
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(212, 168, 67, 0.3);
+}
+
+.page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.page-dots {
+    color: rgba(245, 230, 200, 0.4);
+    font-weight: bold;
+    padding: 0 4px;
+}
+
+/* === Comments Section === */
+.comments-toggle {
+    margin-top: 12px;
+    background: transparent;
+    border: none;
+    color: var(--gold);
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s;
+    padding: 0;
+}
+
+.comments-toggle:hover {
+    color: var(--gold-light);
+    text-decoration: underline;
+}
+
+.comments-section {
+    display: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(245, 230, 200, 0.1);
+}
+
+.comments-section.show {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+/* Custom scrollbar for comments */
+.comments-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.comments-list::-webkit-scrollbar-thumb {
+    background: rgba(212, 168, 67, 0.3);
+    border-radius: 4px;
+}
+
+.comment-item {
+    background: rgba(245, 230, 200, 0.03);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    color: rgba(245, 230, 200, 0.85);
+    line-height: 1.5;
+}
+
+.comment-meta {
+    font-size: 0.65rem;
+    color: rgba(245, 230, 200, 0.35);
+    margin-top: 4px;
+    text-align: right;
+}
+
+.comment-input-area {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.comment-input {
+    flex: 1;
+    min-height: 36px;
+    height: 36px;
+    resize: none;
+    padding: 8px 12px;
+    background: rgba(20, 16, 32, 0.8);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    color: var(--parchment);
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.comment-input:focus {
+    border-color: var(--gold);
+    outline: none;
+    background: rgba(20, 16, 32, 0.95);
+    box-shadow: 0 0 0 2px rgba(212, 168, 67, 0.1);
+}
+
+.btn-comment {
+    height: 36px;
+    padding: 0 14px;
+    background: rgba(212, 168, 67, 0.1);
+    color: var(--gold);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-comment:hover:not(:disabled) {
+    background: rgba(212, 168, 67, 0.25);
+    border-color: var(--gold);
+}
+
+.btn-comment:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Spinner helper for small buttons */
+.btn-comment .spinner {
+    width: 14px;
+    height: 14px;
+    border-width: 2px;
+    margin: 0;
+}
+
+.toast.error {
+    background: rgba(40, 16, 16, 0.9);
+    color: var(--error);
+    border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
 /* === Success Overlay === */
 .success-overlay {
     position: fixed;

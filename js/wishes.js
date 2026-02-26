@@ -31,7 +31,10 @@
 
     // State
     let allWishes = [];
+    let allComments = [];
     let currentFilter = 'all';
+    let currentPage = 1;
+    const itemsPerPage = 10;
 
     // === Tab Switching ===
     tabBtns.forEach(btn => {
@@ -77,6 +80,7 @@
             filterBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentFilter = btn.dataset.filter;
+            currentPage = 1;
             renderList();
         });
     });
@@ -152,6 +156,7 @@
             bugFileName.textContent = '';
             bugFileArea.classList.remove('has-file');
             showSuccess();
+            currentPage = 1;
             await loadList();
 
         } catch (err) {
@@ -203,6 +208,7 @@
             wishFileName.textContent = '';
             wishFileArea.classList.remove('has-file');
             showSuccess();
+            currentPage = 1;
             await loadList();
 
         } catch (err) {
@@ -227,12 +233,18 @@
                 .select('*')
                 .order('created_at', { ascending: false });
 
+            const { data: commentsData, error: commentsError } = await db
+                .from('wish_comments')
+                .select('*')
+                .order('created_at', { ascending: true });
+
             if (error) {
                 listArea.innerHTML = `<div class="empty-state"><p>加载失败，请刷新重试</p></div>`;
                 return;
             }
 
             allWishes = data || [];
+            allComments = commentsData || [];
             renderList();
 
         } catch (err) {
@@ -246,20 +258,30 @@
             ? allWishes
             : allWishes.filter(w => w.type === currentFilter);
 
-        if (filtered.length === 0) {
+        const totalItems = filtered.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+
+        if (totalItems === 0) {
             listArea.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon">🫏</div>
                     <p>本杰驴还在等你的第一个请求...</p>
                 </div>
             `;
+            const paginationArea = document.getElementById('paginationArea');
+            if (paginationArea) paginationArea.innerHTML = '';
             return;
         }
+
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const pageData = filtered.slice(startIndex, endIndex);
 
         const votedIds = getVotedIds();
         let html = '<div class="wish-list">';
 
-        filtered.forEach(wish => {
+        pageData.forEach(wish => {
             const typeBadge = getTypeBadge(wish);
             const statusBadge = getStatusBadge(wish.status);
             const isVoted = votedIds.has(wish.id);
@@ -306,6 +328,40 @@
                 `;
             }
 
+            const wishComments = allComments.filter(c => c.wish_id === wish.id);
+            let commentsHtml = `
+                <button class="comments-toggle" onclick="toggleComments(${wish.id})">
+                    💬 展开评论 (${wishComments.length})
+                </button>
+                <div class="comments-section" id="comments-${wish.id}">
+                    <div class="comments-list">
+            `;
+
+            if (wishComments.length === 0) {
+                commentsHtml += `<div style="text-align:center;font-size:0.75rem;color:rgba(245,230,200,0.4);padding:10px;">暂无评论，快来抢沙发！</div>`;
+            } else {
+                wishComments.forEach(c => {
+                    const cTime = new Date(c.created_at).toLocaleString('zh-CN', {
+                        month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+                    });
+                    commentsHtml += `
+                        <div class="comment-item">
+                            ${escapeHtml(c.content).replace(/\n/g, '<br>')}
+                            <div class="comment-meta">${cTime}</div>
+                        </div>
+                    `;
+                });
+            }
+
+            commentsHtml += `
+                    </div>
+                    <div class="comment-input-area">
+                        <textarea class="comment-input" id="commentInput-${wish.id}" placeholder="写下你的匿名评论..."></textarea>
+                        <button class="btn-comment" id="commentBtn-${wish.id}" onclick="submitComment(${wish.id})">发送</button>
+                    </div>
+                </div>
+            `;
+
             html += `
                 <div class="wish-card" data-status="${wish.status}">
                     <div class="wish-card-header">
@@ -318,6 +374,7 @@
                     ${detailsHtml}
                     ${attachmentHtml}
                     ${adminReplyHtml}
+                    ${commentsHtml}
                     <div class="wish-card-meta">
                         <div class="wish-meta-info">
                             <span>🕐 ${timeStr}</span>
@@ -335,7 +392,92 @@
 
         html += '</div>';
         listArea.innerHTML = html;
+        renderPagination(totalPages);
     }
+
+    // === Pagination Render & Logic ===
+    function renderPagination(totalPages) {
+        const paginationArea = document.getElementById('paginationArea');
+        if (!paginationArea) return;
+
+        if (totalPages <= 1) {
+            paginationArea.innerHTML = '';
+            return;
+        }
+
+        let html = '';
+
+        html += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">◀</button>`;
+
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            } else if (i === currentPage - 2 || i === currentPage + 2) {
+                // To avoid multiple dots
+                const lastEl = html.slice(-33);
+                if (!lastEl.includes('page-dots')) {
+                    html += `<span class="page-dots">...</span>`;
+                }
+            }
+        }
+
+        html += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">▶</button>`;
+
+        paginationArea.innerHTML = html;
+    }
+
+    window.changePage = function (page) {
+        currentPage = page;
+        renderList();
+        document.querySelector('.tab-bar').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // === Comments Logic ===
+    window.toggleComments = function (wishId) {
+        const section = document.getElementById(`comments-${wishId}`);
+        if (section) section.classList.toggle('show');
+    };
+
+    window.submitComment = async function (wishId) {
+        const inputEl = document.getElementById(`commentInput-${wishId}`);
+        const btnEl = document.getElementById(`commentBtn-${wishId}`);
+        const content = inputEl.value.trim();
+
+        if (!content) {
+            showToast('评论不能为空', 'error');
+            return;
+        }
+
+        btnEl.disabled = true;
+        btnEl.innerHTML = '<span class="spinner"></span>';
+
+        try {
+            const { data, error } = await db.from('wish_comments').insert({
+                wish_id: wishId,
+                content: content
+            }).select();
+
+            if (error) {
+                showToast('发送失败: ' + error.message, 'error');
+            } else {
+                showToast('发送成功', 'success');
+                inputEl.value = '';
+                if (data && data.length > 0) {
+                    allComments.push(data[0]);
+                    renderList();
+                    setTimeout(() => {
+                        const section = document.getElementById(`comments-${wishId}`);
+                        if (section) section.classList.add('show');
+                    }, 50);
+                }
+            }
+        } catch (err) {
+            showToast('发送异常', 'error');
+        }
+
+        btnEl.disabled = false;
+        btnEl.textContent = '发送';
+    };
 
     // === Upvote ===
     window.handleUpvote = async function (id, btn) {

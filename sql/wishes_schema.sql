@@ -195,3 +195,21 @@ $$;
 -- 3. 在 Storage > Policies 中添加以下策略：
 --    - INSERT: 允许匿名用户上传文件
 --    - SELECT: 允许匿名用户读取文件
+
+-- ============================================
+-- 匿名评论功能
+-- ============================================
+-- 1. 创建评论表
+CREATE TABLE IF NOT EXISTS wish_comments (
+    id SERIAL PRIMARY KEY,
+    wish_id INTEGER REFERENCES wishes(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 2. 启用 RLS
+ALTER TABLE wish_comments ENABLE ROW LEVEL SECURITY;
+
+-- 3. RLS 策略：允许所有人读取和发布匿名评论
+CREATE POLICY "Anyone can read comments" ON wish_comments FOR SELECT USING (true);
+CREATE POLICY "Anyone can insert comments" ON wish_comments FOR INSERT WITH CHECK (true);
