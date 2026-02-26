@@ -8,11 +8,11 @@
     const { createClient } = supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // State
     let adminUsername = '';
     let adminPassword = '';
     let allData = [];
     let deletingId = null;
+    let replyingId = null;
 
     // DOM
     const loginView = document.getElementById('loginView');
@@ -35,6 +35,15 @@
     const deleteConfirmBtn = document.getElementById('deleteConfirmBtn');
     const deleteText = document.getElementById('deleteText');
     const deleteSpinner = document.getElementById('deleteSpinner');
+
+    // Reply Modal DOM
+    const replyModal = document.getElementById('replyModal');
+    const replyModalClose = document.getElementById('replyModalClose');
+    const replyCancelBtn = document.getElementById('replyCancelBtn');
+    const replyConfirmBtn = document.getElementById('replyConfirmBtn');
+    const replyInput = document.getElementById('replyInput');
+    const replyText = document.getElementById('replyText');
+    const replySpinner = document.getElementById('replySpinner');
 
     // === Login ===
     loginForm.addEventListener('submit', async (e) => {
@@ -141,7 +150,6 @@
         let html = `
             <div class="table-wrapper">
                 <table class="data-table">
-                    <thead>
                         <tr>
                             <th>#</th>
                             <th>类型</th>
@@ -150,7 +158,7 @@
                             <th>👍</th>
                             <th>时间</th>
                             <th>状态操作</th>
-                            <th>删除</th>
+                            <th>操作</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -214,7 +222,10 @@
                     <td style="white-space:nowrap;font-size:0.75rem;color:rgba(245,230,200,0.4);">${createdAt}</td>
                     <td>${statusHtml}</td>
                     <td>
-                        <button class="btn-action btn-delete" onclick="openDelete(${wish.id})" title="删除">🗑️</button>
+                        <div class="action-buttons" style="display:flex; gap:6px; flex-wrap:wrap; justify-content:center;">
+                            <button class="btn-action btn-secondary" onclick="openReply(${wish.id})" title="写批注" style="font-size:1rem;">📝</button>
+                            <button class="btn-action btn-delete" onclick="openDelete(${wish.id})" title="删除" style="font-size:1rem;">🗑️</button>
+                        </div>
                     </td>
                 </tr>
             `;
@@ -264,6 +275,69 @@
             buttons.forEach(b => b.disabled = false);
         }
     };
+
+    // === Reply (驴的碎碎念) ===
+    window.openReply = function (id) {
+        replyingId = id;
+        const wish = allData.find(w => w.id === id);
+        replyInput.value = wish ? (wish.admin_reply || '') : '';
+        replyModal.classList.add('show');
+    };
+
+    function closeReplyModal() {
+        replyModal.classList.remove('show');
+        replyingId = null;
+    }
+
+    replyModalClose.addEventListener('click', closeReplyModal);
+    replyCancelBtn.addEventListener('click', closeReplyModal);
+    replyModal.addEventListener('click', (e) => {
+        if (e.target === replyModal) closeReplyModal();
+    });
+
+    replyConfirmBtn.addEventListener('click', async () => {
+        if (!replyingId) return;
+
+        setReplyLoading(true);
+        const replyContent = replyInput.value.trim();
+
+        try {
+            const { data, error } = await db.rpc('admin_update_wish_reply', {
+                p_username: adminUsername,
+                p_password: adminPassword,
+                p_id: replyingId,
+                p_reply: replyContent
+            });
+
+            if (error) {
+                showToast('保存批注失败: ' + error.message, 'error');
+                setReplyLoading(false);
+                return;
+            }
+
+            if (data && !data.success) {
+                showToast(data.message || '保存批注失败', 'error');
+                setReplyLoading(false);
+                return;
+            }
+
+            showToast('批注已保存 📝', 'success');
+
+            // Update local data
+            const wish = allData.find(w => w.id === replyingId);
+            if (wish) wish.admin_reply = replyContent;
+
+            closeReplyModal();
+            setReplyLoading(false);
+
+            // Re-render table to show updated status or any UI indicator if needed
+            renderTable(getFilteredData());
+
+        } catch (err) {
+            showToast('网络错误', 'error');
+            setReplyLoading(false);
+        }
+    });
 
     // === Delete ===
     window.openDelete = function (id) {
@@ -322,6 +396,12 @@
         loginBtn.disabled = loading;
         loginText.style.display = loading ? 'none' : 'inline';
         loginSpinner.style.display = loading ? 'inline-block' : 'none';
+    }
+
+    function setReplyLoading(loading) {
+        replyConfirmBtn.disabled = loading;
+        replyText.style.display = loading ? 'none' : 'inline';
+        replySpinner.style.display = loading ? 'inline-block' : 'none';
     }
 
     function setDeleteLoading(loading) {

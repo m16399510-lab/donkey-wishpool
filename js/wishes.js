@@ -296,6 +296,16 @@
                 }
             }
 
+            let adminReplyHtml = '';
+            if (wish.admin_reply && wish.admin_reply.trim() !== '') {
+                adminReplyHtml = `
+                    <div class="admin-reply-box">
+                        <div class="admin-reply-title">🫏 驴的碎碎念</div>
+                        <div class="admin-reply-content">${escapeHtml(wish.admin_reply).replace(/\n/g, '<br>')}</div>
+                    </div>
+                `;
+            }
+
             html += `
                 <div class="wish-card" data-status="${wish.status}">
                     <div class="wish-card-header">
@@ -304,9 +314,10 @@
                             ${statusBadge}
                         </div>
                     </div>
-                    <div class="wish-card-body">${escapeHtml(wish.description)}</div>
+                    <div class="wish-card-body">${escapeHtml(wish.description).replace(/\n/g, '<br>')}</div>
                     ${detailsHtml}
                     ${attachmentHtml}
+                    ${adminReplyHtml}
                     <div class="wish-card-meta">
                         <div class="wish-meta-info">
                             <span>🕐 ${timeStr}</span>

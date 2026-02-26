@@ -118,6 +118,27 @@
         </div>
     </div>
 
+    <!-- ===== Reply Modal ===== -->
+    <div class="modal-overlay" id="replyModal">
+        <div class="modal-card" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>📝 驴的碎碎念</h3>
+                <button class="btn btn-icon modal-close" id="replyModalClose">✕</button>
+            </div>
+            <div class="modal-body" style="padding: 20px 0;">
+                <p class="modal-body-text" style="margin-bottom: 12px; font-size: 0.85rem;">写下你想对这条许愿/BUG说的批注，将会在前端公开显示。</p>
+                <textarea class="form-textarea" id="replyInput" placeholder="本杰驴有话说..." style="min-height: 120px;"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="replyCancelBtn">取消</button>
+                <button type="button" class="btn btn-primary" id="replyConfirmBtn" style="width: auto;">
+                    <span id="replyText">💾 保存批注</span>
+                    <span id="replySpinner" class="spinner" style="display:none;"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 

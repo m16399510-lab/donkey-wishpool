@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS wishes (
     qq TEXT NOT NULL,                                          -- 联系方式（QQ号）
     attachment_url TEXT DEFAULT '',                             -- 附件URL（图片/视频）
     wish_type TEXT DEFAULT '',                                  -- 许愿分类: feature/scene/character
+    admin_reply TEXT DEFAULT '',                                -- 管理员批注（驴的碎碎念）
     status TEXT NOT NULL DEFAULT 'pending'                      -- pending/processed/observing/rejected
         CHECK (status IN ('pending', 'processed', 'observing', 'rejected')),
     upvotes INTEGER NOT NULL DEFAULT 0,
@@ -118,6 +119,39 @@ BEGIN
     END IF;
 
     RETURN json_build_object('success', true, 'message', '状态已更新');
+END;
+$$;
+
+-- 8. RPC 函数：管理员更新批注（"驴的碎碎念"）
+CREATE OR REPLACE FUNCTION admin_update_wish_reply(
+    p_username TEXT,
+    p_password TEXT,
+    p_id INTEGER,
+    p_reply TEXT
+)
+RETURNS JSON
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_valid BOOLEAN;
+BEGIN
+    SELECT EXISTS(
+        SELECT 1 FROM admin_credentials
+        WHERE username = p_username AND password_hash = p_password
+    ) INTO v_valid;
+
+    IF NOT v_valid THEN
+        RETURN json_build_object('success', false, 'message', '管理员验证失败');
+    END IF;
+
+    UPDATE wishes SET admin_reply = p_reply WHERE id = p_id;
+
+    IF NOT FOUND THEN
+        RETURN json_build_object('success', false, 'message', '未找到该条目');
+    END IF;
+
+    RETURN json_build_object('success', true, 'message', '批注已更新');
 END;
 $$;
 
