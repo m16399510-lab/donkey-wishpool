@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>本杰驴管理后台</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫏</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- ===== Login View ===== -->
+    <div id="loginView">
+        <div class="container">
+            <header class="page-header">
+                <span class="donkey-icon">🫏</span>
+                <h1>管理后台</h1>
+                <p class="subtitle">本杰驴的许愿王八池 · 管理系统</p>
+            </header>
+
+            <div class="card login-card">
+                <form id="loginForm" autocomplete="off">
+                    <div class="form-group">
+                        <label>用户名</label>
+                        <input type="text" class="form-input" id="adminUsername" placeholder="输入管理员用户名" required>
+                    </div>
+                    <div class="form-group">
+                        <label>密码</label>
+                        <input type="password" class="form-input" id="adminPassword" placeholder="输入管理密码" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="loginBtn">
+                        <span id="loginText">🔑 登录</span>
+                        <span id="loginSpinner" class="spinner" style="display:none;"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Dashboard View ===== -->
+    <div id="dashboardView" style="display:none;">
+        <div class="container-wide">
+            <header class="page-header">
+                <span class="donkey-icon">🫏</span>
+                <h1>许愿池管理</h1>
+                <p class="subtitle">查看并处理用户提交的 BUG 和许愿</p>
+            </header>
+
+            <!-- Stats -->
+            <div class="stats-row" id="statsRow">
+                <div class="stat-card">
+                    <div class="stat-value" id="statTotal">-</div>
+                    <div class="stat-label">总提交</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statBug">-</div>
+                    <div class="stat-label">BUG</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statWish">-</div>
+                    <div class="stat-label">许愿</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="statPending">-</div>
+                    <div class="stat-label">待处理</div>
+                </div>
+            </div>
+
+            <!-- Search & Filter -->
+            <div class="search-bar">
+                <input type="text" class="form-input" id="searchInput" placeholder="🔍 搜索描述 / QQ号 ...">
+                <select class="form-select" id="filterType" style="max-width:150px;">
+                    <option value="all">全部类型</option>
+                    <option value="bug">🐛 BUG</option>
+                    <option value="wish">⭐ 许愿</option>
+                </select>
+                <select class="form-select" id="filterStatus" style="max-width:150px;">
+                    <option value="all">全部状态</option>
+                    <option value="pending">⏳ 待处理</option>
+                    <option value="processed">✅ 已处理</option>
+                    <option value="observing">👀 搁置观察</option>
+                    <option value="rejected">🚫 不予处理</option>
+                </select>
+                <button class="btn btn-secondary" id="refreshBtn">🔄 刷新</button>
+            </div>
+
+            <!-- Data Area -->
+            <div id="dataArea">
+                <div class="loading-overlay">
+                    <span class="spinner"></span>
+                    <span>正在加载数据...</span>
+                </div>
+            </div>
+
+            <footer class="page-footer">
+                本杰驴管理后台 · Powered by Owlpost
+            </footer>
+        </div>
+    </div>
+
+    <!-- ===== Delete Confirm Modal ===== -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>⚠️ 确认删除</h3>
+                <button class="btn btn-icon modal-close" id="deleteModalClose">✕</button>
+            </div>
+            <p class="modal-body-text">确定要删除这条记录吗？此操作无法撤销。</p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="deleteCancelBtn">取消</button>
+                <button type="button" class="btn btn-danger" id="deleteConfirmBtn">
+                    <span id="deleteText">🗑️ 确认删除</span>
+                    <span id="deleteSpinner" class="spinner" style="display:none;"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>

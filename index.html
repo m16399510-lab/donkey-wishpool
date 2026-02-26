@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>本杰驴的许愿王八池</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫏</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="page-header">
+            <span class="donkey-icon">🫏</span>
+            <h1>本杰驴的许愿王八池</h1>
+            <p class="subtitle">拉磨拉磨！让本杰驴为你实现愿望！</p>
+        </header>
+
+        <!-- Tab Switcher -->
+        <div class="tab-bar">
+            <button class="tab-btn active" data-tab="bug" id="tabBug">🐛 提交 BUG</button>
+            <button class="tab-btn" data-tab="wish" id="tabWish">⭐ 我要许愿</button>
+        </div>
+
+        <!-- ===== Bug Form ===== -->
+        <div class="card" id="formCard">
+            <div class="tab-content active" id="bugForm">
+                <form id="bugSubmitForm" autocomplete="off">
+                    <div class="form-group">
+                        <label>问题描述 <span class="label-hint">尽量详细地描述你遇到的问题</span></label>
+                        <textarea class="form-textarea" id="bugDesc" placeholder="例如：打开某某页面时出现白屏..."
+                            required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>相关操作 <span class="label-hint">你做了什么触发了这个问题？</span></label>
+                        <textarea class="form-textarea" id="bugOps" placeholder="例如：点击了『发送』按钮后就卡住了..." required
+                            style="min-height:70px;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>设备型号 <span class="label-hint">手机/平板品牌型号</span></label>
+                        <input type="text" class="form-input" id="bugDevice"
+                            placeholder="例如：iPhone 15 Pro / 小米14 / iPad Air" required>
+                    </div>
+                    <div class="form-group">
+                        <label>联系方式 <span class="label-hint">QQ号，方便追踪问题</span></label>
+                        <input type="text" class="form-input" id="bugQQ" placeholder="输入你的QQ号" required pattern="[0-9]+"
+                            inputmode="numeric" maxlength="15">
+                    </div>
+                    <div class="form-group">
+                        <label>上传附件 <span class="label-hint">截图或录屏（可选）</span></label>
+                        <div class="file-upload-area" id="bugFileArea">
+                            <span class="file-upload-icon">📎</span>
+                            <div class="file-upload-text">
+                                点击或拖拽上传 <span class="highlight">图片 / 视频</span>
+                            </div>
+                            <div class="file-name" id="bugFileName"></div>
+                            <input type="file" id="bugFile" accept="image/*,video/*">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="bugSubmitBtn">
+                        <span id="bugSubmitText">🫏 拉磨吧！本杰驴！</span>
+                        <span id="bugSubmitSpinner" class="spinner" style="display:none;"></span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- ===== Wish Form ===== -->
+            <div class="tab-content" id="wishForm">
+                <form id="wishSubmitForm" autocomplete="off">
+                    <div class="form-group">
+                        <label>许愿类型</label>
+                        <select class="form-select" id="wishType" required>
+                            <option value="" disabled selected>选择许愿类型...</option>
+                            <option value="feature">✨ 新功能</option>
+                            <option value="scene">🏰 新场景</option>
+                            <option value="character">🧙 新角色</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>许愿内容 <span class="label-hint">描述你想要的功能/场景/角色</span></label>
+                        <textarea class="form-textarea" id="wishDesc" placeholder="例如：希望能加入一个决斗俱乐部的场景..."
+                            required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>联系方式 <span class="label-hint">QQ号</span></label>
+                        <input type="text" class="form-input" id="wishQQ" placeholder="输入你的QQ号" required
+                            pattern="[0-9]+" inputmode="numeric" maxlength="15">
+                    </div>
+                    <div class="form-group">
+                        <label>上传附件 <span class="label-hint">参考图/灵感截图（可选）</span></label>
+                        <div class="file-upload-area" id="wishFileArea">
+                            <span class="file-upload-icon">📎</span>
+                            <div class="file-upload-text">
+                                点击或拖拽上传 <span class="highlight">图片 / 视频</span>
+                            </div>
+                            <div class="file-name" id="wishFileName"></div>
+                            <input type="file" id="wishFile" accept="image/*,video/*">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="wishSubmitBtn">
+                        <span id="wishSubmitText">🫏 拉磨吧！本杰驴！</span>
+                        <span id="wishSubmitSpinner" class="spinner" style="display:none;"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ===== Public List ===== -->
+        <h2 class="section-title">📋 大家的声音</h2>
+
+        <!-- Filter -->
+        <div class="filter-bar" id="filterBar">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="bug">🐛 BUG</button>
+            <button class="filter-btn" data-filter="wish">⭐ 许愿</button>
+        </div>
+
+        <div id="listArea">
+            <div class="loading-overlay">
+                <span class="spinner"></span>
+                <span>正在加载...</span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="page-footer">
+            本杰驴的许愿王八池 · Powered by Owlpost
+        </footer>
+    </div>
+
+    <!-- Success Overlay -->
+    <div class="success-overlay" id="successOverlay">
+        <span class="check-icon">🫏✨</span>
+        <h2>提交成功！</h2>
+        <p>本杰驴已经收到你的请求，开始拉磨了！</p>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox-overlay" id="lightbox">
+        <img src="" alt="preview" id="lightboxImg">
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/wishes.js"></script>
+</body>
+
+</html>
