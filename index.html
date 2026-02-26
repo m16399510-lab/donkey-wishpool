@@ -7,7 +7,27 @@
     <title>本杰驴的许愿王八池</title>
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫏</text></svg>">
-    <link rel="stylesheet" href="css/style.css?v=1.1">
+    <!-- Use timestamp for versioning to force cache refresh -->
+    <link rel="stylesheet" href="css/style.css?v=1708955132">
+
+    <script>
+        // Auto-refresh mechanism: check version.txt every 60 seconds
+        const currentVersion = '1.2';
+        setInterval(async () => {
+            try {
+                const response = await fetch('version.txt?t=' + Date.now());
+                if (response.ok) {
+                    const latestVersion = await response.text();
+                    if (latestVersion.trim() !== currentVersion) {
+                        console.log('New version detected! Reloading page...');
+                        window.location.reload(true);
+                    }
+                }
+            } catch (e) {
+                // Ignore errors
+            }
+        }, 60000);
+    </script>
 </head>
 
 <body>
@@ -150,8 +170,8 @@
     <div class="toast" id="toast"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <script src="js/supabase-config.js?v=1.1"></script>
-    <script src="js/wishes.js?v=1.1"></script>
+    <script src="js/supabase-config.js?v=1708955132"></script>
+    <script src="js/wishes.js?v=1708955132"></script>
 </body>
 
 </html>
