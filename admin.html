@@ -7,7 +7,7 @@
     <title>本杰驴管理后台</title>
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫏</text></svg>">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=1.1">
 </head>
 
 <body>
@@ -126,8 +126,10 @@
                 <button class="btn btn-icon modal-close" id="replyModalClose">✕</button>
             </div>
             <div class="modal-body" style="padding: 20px 0;">
-                <p class="modal-body-text" style="margin-bottom: 12px; font-size: 0.85rem;">写下你想对这条许愿/BUG说的批注，将会在前端公开显示。</p>
-                <textarea class="form-textarea" id="replyInput" placeholder="本杰驴有话说..." style="min-height: 120px;"></textarea>
+                <p class="modal-body-text" style="margin-bottom: 12px; font-size: 0.85rem;">写下你想对这条许愿/BUG说的批注，将会在前端公开显示。
+                </p>
+                <textarea class="form-textarea" id="replyInput" placeholder="本杰驴有话说..."
+                    style="min-height: 120px;"></textarea>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-secondary" id="replyCancelBtn">取消</button>
@@ -143,8 +145,8 @@
     <div class="toast" id="toast"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <script src="js/supabase-config.js"></script>
-    <script src="js/admin.js"></script>
+    <script src="js/supabase-config.js?v=1.1"></script>
+    <script src="js/admin.js?v=1.1"></script>
 </body>
 
 </html>
