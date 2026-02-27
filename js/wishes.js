@@ -543,8 +543,8 @@
     function getStatusBadge(status) {
         const map = {
             'pending': { label: '待处理', icon: '⏳' },
-            'processed': { label: '已处理', icon: '✅' },
-            'observing': { label: '搁置观察', icon: '👀' },
+            'processed': { label: '拉完了', icon: '✅' },
+            'observing': { label: '容我三思', icon: '👀' },
             'rejected': { label: '不拉这个磨', icon: '🚫' },
         };
         const info = map[status] || map['pending'];
